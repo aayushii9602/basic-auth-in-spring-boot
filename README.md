@@ -1,0 +1,1 @@
+This is a Spring Boot project using Spring Security for basic authentication. It loads users from a custom UserService, stores them in memory, and protects all endpoints except /user/signup. Passwords are encrypted using BCrypt, and authentication is handled with HTTP Basic Auth.
