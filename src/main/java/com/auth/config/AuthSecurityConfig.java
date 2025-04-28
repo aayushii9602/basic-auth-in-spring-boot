@@ -5,6 +5,8 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -26,9 +28,6 @@ public class AuthSecurityConfig {
 	@Bean
 	public UserDetailsService userDetailService() {
 		List<UserEntity> users = this.userService.getAllUsers();
-//		UserDetails user = User.builder().username("aayushi").password(passwordEncoder().encode("abc123"))
-//				.roles("Admin").build();
-//		return new InMemoryUserDetailsManager(user);
 		List<UserDetails> userDetailsList = users.stream().map(user -> User.builder().username(user.getUsername())
 				.password(passwordEncoder().encode(user.getPassword())).roles("USER").build()).toList();
 
@@ -42,11 +41,15 @@ public class AuthSecurityConfig {
 
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-		http.csrf().disable()
-				.authorizeHttpRequests(
-						auth -> auth.requestMatchers("/user/signup").permitAll().anyRequest().authenticated())
+		http.csrf().disable().authorizeHttpRequests(auth -> auth.requestMatchers("/user/signup/**").permitAll()
+				.anyRequest().authenticated())
 				.httpBasic();
-
 		return http.build();
+	}
+
+	@Bean
+	public AuthenticationManager authManager(AuthenticationConfiguration builder) throws Exception {
+		return builder.getAuthenticationManager();
+
 	}
 }

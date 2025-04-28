@@ -24,7 +24,6 @@ public class UserController {
 	public List<UserEntity> getAllUser() {
 		return this.userService.getAllUsers();
 	}
-
 	@PostMapping("/signup")
 	public Boolean signUp(@RequestBody UserEntity user) {
 		if (this.userService.userExists(user).isPresent())
